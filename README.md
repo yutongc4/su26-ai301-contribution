@@ -113,29 +113,49 @@ npm run prettier:check
 
 ### Status
 
-Started Early
+Phase III Complete
 
-### Work Completed
+### Implementation Notes
 
-* Generated high-resolution favicon assets.
-* Added the following files under `frontend/static/img/`:
+For Phase III, I implemented the planned favicon support update for the Shields.io Docusaurus frontend. The main change was to add generated high-resolution favicon assets and register them through the site-level Docusaurus configuration.
 
-  * `apple-touch-icon.png`
-  * `favicon-96x96.png`
-  * `favicon.svg`
-  * `site.webmanifest`
-  * `web-app-manifest-192x192.png`
-  * `web-app-manifest-512x512.png`
-* Updated `frontend/docusaurus.config.cjs` to include favicon-related `headTags`.
+Files updated:
 
-### Testing
+* `frontend/docusaurus.config.cjs`
+* `frontend/static/img/apple-touch-icon.png`
+* `frontend/static/img/favicon-96x96.png`
+* `frontend/static/img/favicon.svg`
+* `frontend/static/img/site.webmanifest`
+* `frontend/static/img/web-app-manifest-192x192.png`
+* `frontend/static/img/web-app-manifest-512x512.png`
 
-The following commands completed successfully:
+The Docusaurus config was updated to include favicon-related `headTags` for PNG favicon, SVG favicon, Apple touch icon, Apple mobile web app title, and web app manifest support.
 
-```bash
-npm run build
-npm run prettier:check
-```
+### Code Changes
+
+Development branch:
+https://github.com/yutongc4/shields/tree/fix-high-res-favicons
+
+Pull request:
+https://github.com/badges/shields/pull/11920
+
+### Challenges Faced
+
+The main challenge was understanding where the current Shields.io frontend manages site metadata. Earlier context from the issue referenced a different frontend structure, but the current project uses Docusaurus. I found that the correct place to add favicon metadata was `frontend/docusaurus.config.cjs`, and the static assets should be placed under `frontend/static/img/`.
+
+I also had to resolve a Node version mismatch during setup by switching to Node `v22.22.3` with `nvm`.
+
+### Testing Strategy
+
+I validated the implementation by running the project build and formatting checks.
+
+Commands run:
+
+`npm run build`
+
+`npm run prettier:check`
+
+Both commands completed successfully. The build confirmed that the Docusaurus frontend could compile with the new favicon assets and metadata configuration, and the Prettier check confirmed that the code formatting matched the project style.
 
 ---
 
