@@ -161,8 +161,6 @@ Both commands completed successfully. The build confirmed that the Docusaurus fr
 
 ## Phase IV: Pull Request
 
-## Phase IV: Pull Request
-
 ### Status
 
 Phase IV Complete — Awaiting Review
