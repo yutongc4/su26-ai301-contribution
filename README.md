@@ -163,15 +163,19 @@ Both commands completed successfully. The build confirmed that the Docusaurus fr
 
 ### Status
 
-Phase IV Complete — Awaiting Review
+Phase IV Complete — Closed Without Merge
 
 ### Pull Request
 
 https://github.com/badges/shields/pull/11920
 
+### Related Maintainer PR
+
+https://github.com/badges/shields/pull/11947
+
 ### PR Description
 
-This pull request adds high-resolution favicon support for the current Shields.io Docusaurus frontend. It adds generated favicon assets under `frontend/static/img/` and registers the related favicon metadata through `headTags` in `frontend/docusaurus.config.cjs`.
+This pull request added high-resolution favicon support for the current Shields.io Docusaurus frontend. It added generated favicon assets under `frontend/static/img/` and registered the related favicon metadata through `headTags` in `frontend/docusaurus.config.cjs`.
 
 ### What I Contributed
 
@@ -191,10 +195,12 @@ Before submitting the PR, I ran:
 
 Both commands completed successfully.
 
-### Maintainer Feedback / Next Steps
+### Maintainer Feedback / Outcome
 
-The PR is currently open and awaiting maintainer review. The automated checks are passing. My next step is to monitor the PR for reviewer feedback and respond if maintainers leave comments or request changes.
+After submission, maintainers reviewed the PR and noted that the generated black-and-white favicon assets were not preferred compared to the existing colored Shields.io branding. A maintainer later remade the colored Shields.io logo/favicon in PR #11947, which was merged, so my PR was closed without merge.
 
 ### Learnings & Reflections
 
-This contribution helped me understand how a modern Docusaurus frontend manages site-level metadata and static assets. I also practiced working through the full open-source contribution workflow: selecting an issue, setting up the project locally, creating a branch, planning the fix, implementing the change, validating it, and submitting a pull request.
+This contribution helped me complete the full open-source contribution workflow: selecting an issue, setting up the project locally, creating a branch, planning the fix, implementing the change, validating it, and submitting a pull request.
+
+I also learned that passing automated checks is only one part of open-source contribution. For visual or design-related changes, the solution also needs to match the project’s branding and maintainer preferences.
