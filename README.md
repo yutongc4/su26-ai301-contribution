@@ -161,18 +161,42 @@ Both commands completed successfully. The build confirmed that the Docusaurus fr
 
 ## Phase IV: Pull Request
 
+## Phase IV: Pull Request
+
 ### Status
 
-Started Early
+Phase IV Complete — Awaiting Review
 
 ### Pull Request
 
 https://github.com/badges/shields/pull/11920
 
-### PR Summary
+### PR Description
 
-Opened PR #11920 to add high-resolution favicon support for the current Docusaurus frontend. The PR adds generated favicon assets and registers them through `headTags` in `frontend/docusaurus.config.cjs`.
+This pull request adds high-resolution favicon support for the current Shields.io Docusaurus frontend. It adds generated favicon assets under `frontend/static/img/` and registers the related favicon metadata through `headTags` in `frontend/docusaurus.config.cjs`.
 
-### Current PR Status
+### What I Contributed
 
-The PR is open, checks are passing, and it is waiting for maintainer review.
+* Added high-resolution favicon assets for browser and mobile support.
+* Added SVG favicon and PNG favicon metadata.
+* Added Apple touch icon metadata.
+* Added web app manifest support.
+* Updated the Docusaurus site configuration to include the new favicon-related `headTags`.
+
+### Final Validation
+
+Before submitting the PR, I ran:
+
+`npm run build`
+
+`npm run prettier:check`
+
+Both commands completed successfully.
+
+### Maintainer Feedback / Next Steps
+
+The PR is currently open and awaiting maintainer review. The automated checks are passing. My next step is to monitor the PR for reviewer feedback and respond if maintainers leave comments or request changes.
+
+### Learnings & Reflections
+
+This contribution helped me understand how a modern Docusaurus frontend manages site-level metadata and static assets. I also practiced working through the full open-source contribution workflow: selecting an issue, setting up the project locally, creating a branch, planning the fix, implementing the change, validating it, and submitting a pull request.
