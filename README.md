@@ -1,4 +1,4 @@
-# CodePath AI301 Contribution Log
+# CodePath AI301 Contribution Log First Selected Issue
 
 ## Phase I: Issue Selection
 
