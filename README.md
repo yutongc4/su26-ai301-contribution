@@ -113,94 +113,194 @@ npm run prettier:check
 
 ### Status
 
-Phase III Complete
+Phase III Complete — Updated for Resubmission
 
-### Implementation Notes
+### Development Branch
 
-For Phase III, I implemented the planned favicon support update for the Shields.io Docusaurus frontend. The main change was to add generated high-resolution favicon assets and register them through the site-level Docusaurus configuration.
+[fix-high-res-favicons](https://github.com/yutongc4/shields/tree/fix-high-res-favicons)
 
-Files updated:
+### Implementation Progress
 
-* `frontend/docusaurus.config.cjs`
-* `frontend/static/img/apple-touch-icon.png`
-* `frontend/static/img/favicon-96x96.png`
-* `frontend/static/img/favicon.svg`
-* `frontend/static/img/site.webmanifest`
-* `frontend/static/img/web-app-manifest-192x192.png`
-* `frontend/static/img/web-app-manifest-512x512.png`
+I completed the implementation and later added regression test coverage for the Phase III resubmission.
 
-The Docusaurus config was updated to include favicon-related `headTags` for PNG favicon, SVG favicon, Apple touch icon, Apple mobile web app title, and web app manifest support.
+#### Commit 1 — Favicon Implementation
 
-### Code Changes
+[`71929e7`](https://github.com/badges/shields/commit/71929e76903f7df74ce4c9f017440758fa904167)
+— `Add high resolution favicon assets`
 
-Development branch:
-https://github.com/yutongc4/shields/tree/fix-high-res-favicons
+This commit implemented the original favicon update and was submitted in PR #11920.
 
-Pull request:
-https://github.com/badges/shields/pull/11920
+Files modified or added:
+
+- `frontend/docusaurus.config.cjs`
+- `frontend/static/img/apple-touch-icon.png`
+- `frontend/static/img/favicon-96x96.png`
+- `frontend/static/img/favicon.svg`
+- `frontend/static/img/site.webmanifest`
+- `frontend/static/img/web-app-manifest-192x192.png`
+- `frontend/static/img/web-app-manifest-512x512.png`
+
+In `frontend/docusaurus.config.cjs`, I added favicon-related `headTags` for:
+
+- a 96×96 PNG favicon
+- an SVG favicon
+- the existing `.ico` favicon as a shortcut icon
+- an Apple touch icon
+- the Apple mobile web app title
+- the web app manifest
+
+The relevant asset references added to the configuration were:
+
+- `/img/favicon-96x96.png`
+- `/img/favicon.svg`
+- `/img/favicon.ico`
+- `/img/apple-touch-icon.png`
+- `/img/site.webmanifest`
+
+The new `site.webmanifest` also references the 192×192 and 512×512 web app icons.
+
+#### Commit 2 — Regression Test
+
+[`2a9ef7a`](https://github.com/yutongc4/shields/commit/2a9ef7a5032d2c776324beca60b9efa6cbd9ee47)
+— `Add favicon metadata regression test`
+
+For my Phase III resubmission, I added:
+
+`frontend/docusaurus.config.spec.mjs`
+
+This regression test exercises the favicon implementation in three areas:
+
+1. It verifies that `frontend/docusaurus.config.cjs` contains the expected favicon metadata, including the PNG favicon, SVG favicon, Apple touch icon, web app manifest, and Apple mobile web app title.
+2. It verifies that the favicon and manifest assets referenced by the implementation actually exist under `frontend/static/img/`.
+3. It parses `site.webmanifest` and verifies the Shields.io application metadata and the expected 192×192 and 512×512 web app icon references.
+
+This test commit was added to my `fix-high-res-favicons` fork branch after the original PR had already been closed, as part of my Phase III resubmission.
+
+### Scope of the Change
+
+The implementation remained scoped to issue #1497.
+
+The original implementation changed only the Docusaurus favicon configuration and favicon-related static assets. The resubmission added one regression test specifically for that implementation.
+
+I did not modify unrelated application logic, API behavior, badge rendering code, or unrelated frontend components.
 
 ### Challenges Faced
 
-The main challenge was understanding where the current Shields.io frontend manages site metadata. Earlier context from the issue referenced a different frontend structure, but the current project uses Docusaurus. I found that the correct place to add favicon metadata was `frontend/docusaurus.config.cjs`, and the static assets should be placed under `frontend/static/img/`.
+#### Finding the Current Metadata Configuration
 
-I also had to resolve a Node version mismatch during setup by switching to Node `v22.22.3` with `nvm`.
+The first challenge was identifying where the current Shields.io frontend manages site-level metadata.
+
+Earlier issue context referenced an older frontend structure, while the current site uses Docusaurus. After reviewing the current frontend, I determined that the appropriate location for the favicon metadata was:
+
+`frontend/docusaurus.config.cjs`
+
+and that the associated static assets belonged under:
+
+`frontend/static/img/`
+
+This allowed me to keep the implementation within the project's existing site configuration rather than introducing a separate React/TSX metadata component.
+
+#### Node.js Version Mismatch
+
+During the original project setup, my local environment was using Node.js `v21.7.3`, while the project required a supported Node version.
+
+I resolved this by switching to Node `v22.22.3` using `nvm` and reinstalling the dependencies:
+
+```bash
+nvm use 22
+npm ci
+
+After switching Node versions, I was able to install and build the project successfully.
+
+Adding Regression Test Coverage
+
+My original Phase III implementation relied on the project build, formatting checks, and existing CI, but it did not include a dedicated regression test for the favicon change.
+
+For the resubmission, I addressed this by adding frontend/docusaurus.config.spec.mjs.
+
+While developing the test, directly importing docusaurus.config.cjs caused an ESM/CommonJS dependency conflict through the Docusaurus plugin dependencies. Instead of modifying unrelated project code to make the test work, I kept the test scoped to the favicon feature.
+
+The final regression test reads the configuration, checks the expected metadata, verifies that the referenced assets exist, and validates the contents of site.webmanifest.
+
+This allowed me to test the favicon implementation without making unrelated changes to the project's plugin code.
 
 ### Testing Strategy
 
-I validated the implementation by running the project build and formatting checks.
+I used the project's existing checks together with a new regression test targeted specifically at the favicon implementation.
 
-Commands run:
+### Favicon Regression Test
 
-`npm run build`
+I ran:
 
-`npm run prettier:check`
+npx mocha frontend/docusaurus.config.spec.mjs
 
-Both commands completed successfully. The build confirmed that the Docusaurus frontend could compile with the new favicon assets and metadata configuration, and the Prettier check confirmed that the code formatting matched the project style.
+Result:
 
----
+Docusaurus favicon configuration
+  ✔ includes the expected favicon metadata
+  ✔ includes the favicon assets referenced by the configuration
+  ✔ defines the expected web app manifest icons
 
-## Phase IV: Pull Request
+3 passing
 
-### Status
+The three test cases verify the favicon configuration, the existence of the referenced assets, and the contents of the web app manifest.
 
-Phase IV Complete — Closed Without Merge
+### Build Validation
 
-### Pull Request
+I ran:
 
-https://github.com/badges/shields/pull/11920
+npm run build
 
-### Related Maintainer PR
+The build completed successfully, confirming that the Docusaurus frontend could compile with the favicon metadata and static asset references.
 
-https://github.com/badges/shields/pull/11947
+### Formatting Validation
 
-### PR Description
+I ran:
 
-This pull request added high-resolution favicon support for the current Shields.io Docusaurus frontend. It added generated favicon assets under `frontend/static/img/` and registered the related favicon metadata through `headTags` in `frontend/docusaurus.config.cjs`.
+npm run prettier:check
 
-### What I Contributed
+The formatting check completed successfully after formatting the new regression test according to the project's Prettier rules.
 
-* Added high-resolution favicon assets for browser and mobile support.
-* Added SVG favicon and PNG favicon metadata.
-* Added Apple touch icon metadata.
-* Added web app manifest support.
-* Updated the Docusaurus site configuration to include the new favicon-related `headTags`.
+### Existing Project CI
 
-### Final Validation
+The original PR also ran the project's GitHub Actions checks. The PR checks included project CI such as Main, Integration, E2E, Lint, Services, Package Library, and Test Documentation.
 
-Before submitting the PR, I ran:
+These checks provided additional evidence that the original favicon implementation did not break the project's existing automated checks.
 
-`npm run build`
+### Manual Verification
 
-`npm run prettier:check`
+I also manually reviewed frontend/docusaurus.config.cjs and confirmed that the expected metadata entries were present for:
 
-Both commands completed successfully.
+PNG favicon
+SVG favicon
+shortcut icon
+Apple touch icon
+Apple mobile web app title
+web app manifest
 
-### Maintainer Feedback / Outcome
+I confirmed that the referenced assets existed under frontend/static/img/ and that site.webmanifest referenced the expected 192×192 and 512×512 web app icons.
 
-After submission, maintainers reviewed the PR and noted that the generated black-and-white favicon assets were not preferred compared to the existing colored Shields.io branding. A maintainer later remade the colored Shields.io logo/favicon in PR #11947, which was merged, so my PR was closed without merge.
+### Implementation Outcome
 
-### Learnings & Reflections
+The original implementation was submitted in:
 
-This contribution helped me complete the full open-source contribution workflow: selecting an issue, setting up the project locally, creating a branch, planning the fix, implementing the change, validating it, and submitting a pull request.
+[badges/shields#11920](https://github.com/badges/shields/pull/11920)
 
-I also learned that passing automated checks is only one part of open-source contribution. For visual or design-related changes, the solution also needs to match the project’s branding and maintainer preferences.
+PR #11920 contains my original favicon implementation commit `71929e7`.
+
+For the Phase III resubmission, I later added regression test coverage to my fork branch in commit:
+
+[`2a9ef7a`](https://github.com/yutongc4/shields/commit/2a9ef7a5032d2c776324beca60b9efa6cbd9ee47)
+— `Add favicon metadata regression test`
+
+My original PR was not merged.
+
+During maintainer review, the maintainers identified that the black-and-white favicon assets I generated did not match the preferred Shields.io visual branding.
+
+A maintainer then created a separate implementation:
+
+[badges/shields#11947](https://github.com/badges/shields/pull/11947)
+
+That maintainer PR used a colored version of the Shields.io logo, was merged, and ultimately resolved issue #1497.
+
+My contribution therefore completed the implementation and review process, but the final merged solution came from the maintainer's separate PR rather than my PR.
