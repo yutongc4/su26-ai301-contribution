@@ -304,3 +304,258 @@ A maintainer then created a separate implementation:
 That maintainer PR used a colored version of the Shields.io logo, was merged, and ultimately resolved issue #1497.
 
 My contribution therefore completed the implementation and review process, but the final merged solution came from the maintainer's separate PR rather than my PR.
+
+---
+
+## Phase IV: Pull Request
+
+### Status
+
+Phase IV Complete — PR Closed Without Merge
+
+### Pull Request
+
+[badges/shields#11920](https://github.com/badges/shields/pull/11920)
+
+### Related Issue
+
+[Provide high resolution favicon #1497](https://github.com/badges/shields/issues/1497)
+
+### Related Maintainer PR
+
+[badges/shields#11947](https://github.com/badges/shields/pull/11947)
+
+### Pull Request Summary
+
+I submitted PR #11920 to add high-resolution favicon support to the current Shields.io Docusaurus frontend.
+
+The existing site configuration primarily relied on `img/favicon.ico`. My implementation added additional favicon and mobile web app assets and registered them through the Docusaurus site configuration.
+
+The implementation included:
+
+- a 96×96 PNG favicon
+- an SVG favicon
+- an Apple touch icon
+- a web app manifest
+- 192×192 and 512×512 web app icons
+- favicon-related `headTags` in `frontend/docusaurus.config.cjs`
+
+The goal was to provide browsers and mobile devices with dedicated higher-resolution favicon and home-screen metadata rather than relying only on the existing `.ico` favicon.
+
+### Why This Change Was Needed
+
+The code diff alone shows that favicon files and metadata were added, but it does not explain why those additions were necessary.
+
+Issue #1497 requested better high-resolution favicon support. The existing Docusaurus configuration did not provide dedicated metadata for several modern favicon and mobile use cases.
+
+I therefore implemented the change at the site-configuration level so that browsers could discover the appropriate favicon, Apple touch icon, and web app manifest assets without introducing an additional React component solely for metadata.
+
+### Original Implementation
+
+My original implementation was submitted in commit:
+
+[`71929e7`](https://github.com/badges/shields/commit/71929e76903f7df74ce4c9f017440758fa904167)
+— `Add high resolution favicon assets`
+
+Files modified or added:
+
+- `frontend/docusaurus.config.cjs`
+- `frontend/static/img/apple-touch-icon.png`
+- `frontend/static/img/favicon-96x96.png`
+- `frontend/static/img/favicon.svg`
+- `frontend/static/img/site.webmanifest`
+- `frontend/static/img/web-app-manifest-192x192.png`
+- `frontend/static/img/web-app-manifest-512x512.png`
+
+### Acceptance Criteria / Validation
+
+For this resubmission, I documented the following acceptance criteria based on the implementation and the validation I completed:
+
+- [x] High-resolution PNG favicon metadata is present.
+- [x] SVG favicon metadata is present.
+- [x] The existing `.ico` favicon remains available as a shortcut icon.
+- [x] Apple touch icon metadata is present.
+- [x] A web app manifest is provided.
+- [x] The manifest references 192×192 and 512×512 web app icons.
+- [x] All favicon assets referenced by the implementation exist.
+- [x] The Docusaurus frontend builds successfully.
+- [x] The modified files pass the project's Prettier formatting check.
+- [x] A dedicated regression test verifies the favicon metadata, assets, and manifest.
+- [x] The implementation remains scoped to the favicon issue without unrelated application changes.
+
+### Testing and Validation
+
+For the original implementation, I ran:
+
+```bash
+npm run build
+npm run prettier:check
+```
+
+Both completed successfully.
+
+npm run build verified that the Docusaurus frontend could compile with the new favicon metadata and asset references.
+
+npm run prettier:check verified that the modified source followed the project's formatting requirements.
+
+The original pull request also ran the project's GitHub Actions checks.
+
+### Regression Test Added for Resubmission
+
+My original PR did not contain a dedicated automated regression test for the favicon metadata.
+
+To address this weakness in my Phase III/IV resubmission, I added a regression test to my development branch in:
+
+[`2a9ef7a`](https://github.com/yutongc4/shields/commit/2a9ef7a5032d2c776324beca60b9efa6cbd9ee47)
+— `Add favicon metadata regression test`
+
+Test file:
+
+frontend/docusaurus.config.spec.mjs
+
+The regression test verifies three areas:
+
+1. The expected favicon metadata exists in frontend/docusaurus.config.cjs.
+2. The favicon and manifest assets referenced by the implementation exist under frontend/static/img/.
+3. site.webmanifest contains the expected Shields.io metadata and references the 192×192 and 512×512 web app icons.
+
+I ran:
+
+npx mocha frontend/docusaurus.config.spec.mjs
+
+Result:
+
+Docusaurus favicon configuration
+  ✔ includes the expected favicon metadata
+  ✔ includes the favicon assets referenced by the configuration
+  ✔ defines the expected web app manifest icons
+
+3 passing
+
+I also formatted the test according to the project's Prettier configuration and reran:
+
+npm run prettier:check
+
+The regression-test commit was added to my fix-high-res-favicons fork branch after PR #11920 had already been closed. Therefore, it is documented separately and is not represented as part of the original closed PR.
+
+### Before / After Evidence
+
+This issue primarily involved document metadata and favicon assets rather than an interactive application feature, so there was limited UI evidence to demonstrate with a traditional before/after screenshot.
+
+Before the change, the Docusaurus configuration relied on:
+
+favicon: 'img/favicon.ico'
+
+My implementation added explicit metadata for additional favicon formats and mobile contexts, including:
+
+/img/favicon-96x96.png
+/img/favicon.svg
+/img/apple-touch-icon.png
+/img/site.webmanifest
+
+The manifest additionally referenced:
+
+/img/web-app-manifest-192x192.png
+/img/web-app-manifest-512x512.png
+
+The build result, project checks, file diff, and regression test provide the validation evidence for this configuration-focused change.
+
+### Maintainer Feedback Log
+
+#### June 13 — Visual Design Feedback
+
+Maintainer `PyvesB` reviewed PR #11920 and questioned why the new favicons were simplified black and white, noting that they appeared to be a downgrade compared with the existing favicon.
+
+I did not submit a follow-up code revision before the PR was closed. In retrospect, this feedback identified a gap in my validation process: my automated checks verified technical correctness but did not evaluate whether the generated assets preserved the project's visual branding.
+
+#### June 21 — Final Maintainer Decision
+
+Maintainer `LitoMore` stated that the PR could be closed and that the favicon would be remade using a colored version.
+
+My PR #11920 was closed without merge.
+
+The maintainer subsequently created PR #11947, which used a remade colored Shields.io logo and was merged.
+
+#### Resubmission Follow-up
+
+For my CodePath resubmission, I addressed a separate testing weakness in my original contribution by adding favicon-specific regression coverage in commit [`2a9ef7a`](https://github.com/yutongc4/shields/commit/2a9ef7a5032d2c776324beca60b9efa6cbd9ee47).
+
+This test verifies the favicon metadata, required assets, and web app manifest. It does not claim to address the maintainers' visual-design concern; that concern would require revising the favicon artwork itself.
+
+### Reflection on Maintainer Feedback
+
+The maintainer feedback showed that my original validation focused primarily on technical correctness.
+
+Before submitting the PR, I had verified that:
+
+- the Docusaurus configuration was valid,
+- the required assets existed,
+- the project built successfully, and
+- formatting checks passed.
+
+However, these checks could not determine whether the generated favicon design matched the existing Shields.io visual identity.
+
+The maintainers pointed out that my black-and-white favicon assets were a visual downgrade compared with the existing colored branding. My PR was ultimately closed without merge, and a maintainer implemented a colored version separately in PR #11947.
+
+Looking back, I would preserve the project's existing colored branding and perform visual comparison at multiple favicon sizes before submitting a similar change.
+
+### Final Outcome
+
+My PR #11920 was not merged.
+
+The technical approach I submitted added the requested favicon metadata and assets, but the visual assets I generated did not meet the maintainers' preferred branding direction.
+
+Instead of merging my implementation, a maintainer created the separate PR #11947 with a redesigned colored favicon. That maintainer PR was merged and became the final project solution.
+
+For my resubmission, I did not represent the maintainer's implementation as my own work. My implementation remains commit 71929e7, and my later regression-test work is documented separately in commit 2a9ef7a.
+
+### Learnings & Reflections
+#### Technical Learning
+
+I learned more about how Docusaurus manages site-level metadata and static assets. In particular, I learned that favicon support involves more than replacing a single .ico file. Modern browser and mobile support can involve multiple icon formats, an Apple touch icon, a web app manifest, and different image sizes.
+
+I also learned that a successful build is not the same as complete feature validation. My original implementation passed technical checks, but those checks did not evaluate the visual quality or branding of the generated favicon assets.
+
+Adding the regression test during my resubmission also taught me to test configuration-focused changes directly. The test now verifies the expected metadata, referenced files, and manifest contents instead of relying only on the fact that the application builds.
+
+#### Open-Source Contribution Learning
+
+The most important open-source lesson from this contribution was that technical correctness and maintainer acceptance are different requirements.
+
+My implementation addressed the technical favicon requirements, but the maintainers also cared about preserving the project's visual identity. That requirement became clear during review.
+
+I learned that for design-related changes, I should inspect the existing project's visual language and, when the desired appearance is ambiguous, ask maintainers about branding expectations before generating final assets.
+
+I also learned that a contribution can still provide useful engineering experience even when the submitted PR is not merged. In this case, I went through issue selection, reproduction, implementation, testing, PR submission, maintainer review, and analysis of the final upstream solution.
+
+#### What I Would Do Differently
+
+If I approached this issue again, I would change three parts of my process.
+
+First, before generating favicon assets, I would explicitly confirm whether maintainers wanted the existing colored Shields.io branding preserved. This could have prevented the main reason my PR was rejected.
+
+Second, I would add the favicon regression test during the initial implementation rather than after the PR was closed. The test would verify the metadata, required files, and manifest contents from the beginning.
+
+Third, I would include visual validation as part of my acceptance criteria for a branding-related change. In addition to build, formatting, and automated tests, I would compare the new favicon against the existing Shields.io branding at multiple sizes before submitting the PR.
+
+### Communication
+
+I first commented on issue #1497 to express interest in implementing the issue and described my intended approach before beginning the contribution.
+
+After implementation, I posted PR #11920 and surfaced the completed work for maintainer review.
+
+The maintainers reviewed the contribution and provided feedback about the visual design. That feedback ultimately led to the decision to use a separate maintainer implementation.
+
+### Contribution Summary
+
+My contribution resulted in:
+
+- an implementation of high-resolution favicon metadata and assets in commit 71929e7;
+- a submitted and reviewed pull request, #11920;
+- direct maintainer feedback about the visual design;
+- a documented analysis of why the implementation was not merged;
+- a follow-up regression test in commit 2a9ef7a;
+- three passing favicon-specific regression test cases; and
+- a comparison between my submitted approach and the final maintainer solution in PR #11947.
+
+Although my PR was closed without merge, the contribution gave me experience with the complete open-source contribution and review cycle and showed me how technical validation, project conventions, and maintainer design expectations all affect whether a change is accepted.
