@@ -209,7 +209,7 @@ I resolved this by switching to Node `v22.22.3` using `nvm` and reinstalling the
 ```bash
 nvm use 22
 npm ci
-
+```
 After switching Node versions, I was able to install and build the project successfully.
 
 Adding Regression Test Coverage
